@@ -1,10 +1,16 @@
+# NetBeans specific #
+nbproject/private/
+build/
+nbbuild/
+dist/
+nbdist/
+nbactions.xml
+nb-configuration.xml
 
-dist/README.TXT
-dist/AnteikuCafePOS.jar
-build/classes/anteikucafepos/MainGUI.form
-build/classes/anteikucafepos/MainGUI.class
-build/classes/anteikucafepos/AnteikuCafePOS.class
-build/classes/.netbeans_update_resources
-build/classes/.netbeans_automatic_build
-build/built-jar.properties
-build.xml
+# Class Files #
+*.class
+
+# Package Files #
+*.jar
+*.war
+*.ear
