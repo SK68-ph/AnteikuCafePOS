@@ -1,0 +1,10 @@
+
+dist/README.TXT
+dist/AnteikuCafePOS.jar
+build/classes/anteikucafepos/MainGUI.form
+build/classes/anteikucafepos/MainGUI.class
+build/classes/anteikucafepos/AnteikuCafePOS.class
+build/classes/.netbeans_update_resources
+build/classes/.netbeans_automatic_build
+build/built-jar.properties
+build.xml
