@@ -1,0 +1,6 @@
+{
+    "Products":[
+    { "ProductCode":"C01","ItemName":"MilkTea","ItemPrice":"30", "Sizes":"S/M/L"},
+    { "ProductCode":"C02","ItemName":"ThaiTea","ItemPrice":"30", "Sizes":"S/M/L"}
+    ]
+}
