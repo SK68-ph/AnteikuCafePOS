@@ -1,9 +1,15 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
+
+
 package anteikucafepos;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.Scanner;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+import org.json.*;
 /**
  *
  * @author Administrator
@@ -36,28 +42,34 @@ public class MainGUI extends javax.swing.JFrame {
         jLabel4 = new javax.swing.JLabel();
         txtboxProdCode = new javax.swing.JTextField();
         txtboxProdName = new javax.swing.JTextField();
-        txtboxQuantity = new javax.swing.JSpinner();
-        txtboxPrice = new javax.swing.JTextField();
+        txtboxProdQuantity = new javax.swing.JSpinner();
+        txtboxProdPrice = new javax.swing.JTextField();
         btnRemoveItem = new javax.swing.JButton();
         btnAddItem = new javax.swing.JButton();
-        jRadioButton1 = new javax.swing.JRadioButton();
-        jRadioButton2 = new javax.swing.JRadioButton();
-        jRadioButton3 = new javax.swing.JRadioButton();
+        radbtnMedium = new javax.swing.JRadioButton();
+        radbtnLarge = new javax.swing.JRadioButton();
+        radbtnSmall = new javax.swing.JRadioButton();
         jLabel6 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
         txtboxTotal = new javax.swing.JTextField();
-        txtbox = new javax.swing.JTextField();
-        checkbal = new javax.swing.JTextField();
+        txtboxTenderAmount = new javax.swing.JTextField();
+        txtboxChange = new javax.swing.JTextField();
         jLabel9 = new javax.swing.JLabel();
         btnPrintBill = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
-        tblProducts = new javax.swing.JTable();
+        tblCart = new javax.swing.JTable();
         jScrollPane2 = new javax.swing.JScrollPane();
-        checkreceipt = new javax.swing.JTextArea();
+        txtboxBill = new javax.swing.JTextArea();
+        btnNewTransaction = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("MainGUI");
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowOpened(java.awt.event.WindowEvent evt) {
+                formWindowOpened(evt);
+            }
+        });
 
         jPanel2.setBackground(new java.awt.Color(0, 153, 102));
 
@@ -81,35 +93,17 @@ public class MainGUI extends javax.swing.JFrame {
         jLabel4.setText("Price");
 
         txtboxProdCode.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        txtboxProdCode.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtboxProdCodeActionPerformed(evt);
-            }
-        });
         txtboxProdCode.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 txtboxProdCodeKeyReleased(evt);
             }
         });
 
+        txtboxProdName.setEditable(false);
         txtboxProdName.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        txtboxProdName.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtboxProdNameActionPerformed(evt);
-            }
-        });
 
-        txtboxPrice.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        txtboxPrice.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtboxPriceActionPerformed(evt);
-            }
-        });
-        txtboxPrice.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyReleased(java.awt.event.KeyEvent evt) {
-                txtboxPriceKeyReleased(evt);
-            }
-        });
+        txtboxProdPrice.setEditable(false);
+        txtboxProdPrice.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
 
         btnRemoveItem.setFont(new java.awt.Font("Tahoma", 1, 16)); // NOI18N
         btnRemoveItem.setText("Remove");
@@ -128,21 +122,21 @@ public class MainGUI extends javax.swing.JFrame {
             }
         });
 
-        SizesGroup.add(jRadioButton1);
-        jRadioButton1.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        jRadioButton1.setForeground(new java.awt.Color(255, 255, 255));
-        jRadioButton1.setText("Medium");
+        SizesGroup.add(radbtnMedium);
+        radbtnMedium.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        radbtnMedium.setForeground(new java.awt.Color(255, 255, 255));
+        radbtnMedium.setText("Medium");
 
-        SizesGroup.add(jRadioButton2);
-        jRadioButton2.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        jRadioButton2.setForeground(new java.awt.Color(255, 255, 255));
-        jRadioButton2.setText("Large");
+        SizesGroup.add(radbtnLarge);
+        radbtnLarge.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        radbtnLarge.setForeground(new java.awt.Color(255, 255, 255));
+        radbtnLarge.setText("Large");
 
-        SizesGroup.add(jRadioButton3);
-        jRadioButton3.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        jRadioButton3.setForeground(new java.awt.Color(255, 255, 255));
-        jRadioButton3.setSelected(true);
-        jRadioButton3.setText("Small");
+        SizesGroup.add(radbtnSmall);
+        radbtnSmall.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        radbtnSmall.setForeground(new java.awt.Color(255, 255, 255));
+        radbtnSmall.setSelected(true);
+        radbtnSmall.setText("Small");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -162,18 +156,18 @@ public class MainGUI extends javax.swing.JFrame {
                         .addGap(37, 37, 37)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel3)
-                            .addComponent(txtboxQuantity, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(txtboxProdQuantity, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(56, 56, 56)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel4)
-                            .addComponent(txtboxPrice, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(txtboxProdPrice, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(0, 142, Short.MAX_VALUE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jRadioButton3)
+                        .addComponent(radbtnSmall)
                         .addGap(36, 36, 36)
-                        .addComponent(jRadioButton1)
+                        .addComponent(radbtnMedium)
                         .addGap(29, 29, 29)
-                        .addComponent(jRadioButton2)
+                        .addComponent(radbtnLarge)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(btnAddItem, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(31, 31, 31)
@@ -193,8 +187,8 @@ public class MainGUI extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(txtboxProdCode, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txtboxProdName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtboxPrice, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtboxQuantity, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtboxProdPrice, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtboxProdQuantity, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 36, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
@@ -204,9 +198,9 @@ public class MainGUI extends javax.swing.JFrame {
                         .addGap(23, 23, 23))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jRadioButton1)
-                            .addComponent(jRadioButton2)
-                            .addComponent(jRadioButton3))
+                            .addComponent(radbtnMedium)
+                            .addComponent(radbtnLarge)
+                            .addComponent(radbtnSmall))
                         .addGap(17, 17, 17))))
         );
 
@@ -219,39 +213,73 @@ public class MainGUI extends javax.swing.JFrame {
         jLabel8.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         jLabel8.setText("Change");
 
+        txtboxTotal.setEditable(false);
         txtboxTotal.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
 
-        txtbox.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        txtboxTenderAmount.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        txtboxTenderAmount.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtboxTenderAmountKeyReleased(evt);
+            }
+        });
 
-        checkbal.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        txtboxChange.setEditable(false);
+        txtboxChange.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
 
         jLabel9.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         jLabel9.setText("Total");
 
         btnPrintBill.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         btnPrintBill.setText("Print Bill");
+        btnPrintBill.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnPrintBillActionPerformed(evt);
+            }
+        });
 
-        tblProducts.setModel(new javax.swing.table.DefaultTableModel(
+        tblCart.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
             new String [] {
-                "Product ID", "Product Name", "Size", "Quantity", "Price", "Amount"
+                "Product ID", "Product Name", "Size", "Quantity", "Total"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class, java.lang.String.class, java.lang.Integer.class
+                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class, java.lang.Float.class
+            };
+            boolean[] canEdit = new boolean [] {
+                true, false, true, true, false
             };
 
             public Class getColumnClass(int columnIndex) {
                 return types [columnIndex];
             }
-        });
-        jScrollPane1.setViewportView(tblProducts);
 
-        checkreceipt.setColumns(20);
-        checkreceipt.setRows(5);
-        jScrollPane2.setViewportView(checkreceipt);
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jScrollPane1.setViewportView(tblCart);
+        if (tblCart.getColumnModel().getColumnCount() > 0) {
+            tblCart.getColumnModel().getColumn(0).setResizable(false);
+            tblCart.getColumnModel().getColumn(1).setResizable(false);
+            tblCart.getColumnModel().getColumn(2).setResizable(false);
+            tblCart.getColumnModel().getColumn(3).setResizable(false);
+            tblCart.getColumnModel().getColumn(4).setResizable(false);
+        }
+
+        txtboxBill.setColumns(20);
+        txtboxBill.setRows(5);
+        jScrollPane2.setViewportView(txtboxBill);
+
+        btnNewTransaction.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        btnNewTransaction.setText("New Transaction");
+        btnNewTransaction.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnNewTransactionActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -262,65 +290,72 @@ public class MainGUI extends javax.swing.JFrame {
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jScrollPane1)
                     .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 12, Short.MAX_VALUE)
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 340, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel2Layout.createSequentialGroup()
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel2Layout.createSequentialGroup()
-                                .addGap(140, 140, 140)
-                                .addComponent(jLabel6))
-                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel2Layout.createSequentialGroup()
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addGap(36, 36, 36)
                                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(jPanel2Layout.createSequentialGroup()
-                                        .addGap(66, 66, 66)
-                                        .addComponent(jLabel8))
-                                    .addGroup(jPanel2Layout.createSequentialGroup()
-                                        .addGap(36, 36, 36)
-                                        .addComponent(txtboxTotal, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(txtboxTotal, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                                        .addGap(36, 36, 36)
-                                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                                                .addComponent(jLabel9)
-                                                .addGap(50, 50, 50))
-                                            .addComponent(checkbal, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                                .addGap(45, 45, 45)
-                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel7)
-                                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                        .addComponent(btnPrintBill)
-                                        .addComponent(txtbox, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)))))
-                        .addGap(0, 0, Short.MAX_VALUE)))
-                .addContainerGap())
+                                        .addComponent(jLabel9)
+                                        .addGap(50, 50, 50))
+                                    .addComponent(txtboxChange, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addGap(66, 66, 66)
+                                .addComponent(jLabel8)))
+                        .addGap(55, 55, 55)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(jLabel7)
+                                .addGroup(jPanel2Layout.createSequentialGroup()
+                                    .addGap(10, 10, 10)
+                                    .addComponent(txtboxTenderAmount, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(btnPrintBill))
+                        .addContainerGap())
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 50, Short.MAX_VALUE)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 340, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(29, 29, 29))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                                .addComponent(btnNewTransaction)
+                                .addGap(106, 106, 106))))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGap(152, 152, 152)
+                        .addComponent(jLabel6)
+                        .addGap(0, 0, Short.MAX_VALUE))))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(jLabel6)
                         .addGap(18, 18, 18)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel9)
-                            .addComponent(jLabel7))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(txtboxTotal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtbox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(20, 20, 20)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(btnPrintBill, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(jLabel9)
+                                    .addComponent(jLabel7))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(txtboxTotal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(txtboxTenderAmount, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(20, 20, 20)
                                 .addComponent(jLabel8)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(checkbal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(btnPrintBill, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(txtboxChange, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 556, Short.MAX_VALUE)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 510, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnNewTransaction, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jScrollPane1))
                 .addContainerGap())
         );
@@ -338,36 +373,189 @@ public class MainGUI extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
+    
+    // This variable will store data from the json file
+    ArrayList<Products> ProductItems = new ArrayList<Products>();
+    
+    
+    public class Cart{
+        private DefaultTableModel model = (DefaultTableModel) tblCart.getModel();
+        
+        public void AddItem(String ProductID, String ProductSize, int Quantity ){
+            for (Products i: ProductItems)
+            {
+                if(i.getProductId().equals(ProductID)){
+                    float total = i.getPrice() * Quantity;
+                    if (ProductSize.equals("Medium")) {
+                        total = (total / 100) * 150;
+                    }else if(ProductSize.equals("Large")){
+                        total = (total / 100) * 200;
+                    }
+                    
+                    Object[] rowData = { i.getProductId(),i.getProductName(), ProductSize, Quantity, total};
+                    model.addRow(rowData);
+                }
+            }
+            CalculateTotal();
+        }
+        public void RemoveItem(){
+            try{
+                model.removeRow(tblCart.getSelectedRow());
+            }catch (java.lang.ArrayIndexOutOfBoundsException AIE){
+                System.out.println("No items to be deleted");
+            }
+            CalculateTotal();
+        }
+        
+        public void CalculateTotal(){
+            float total = 0;
+            for (int i = 0; i < model.getRowCount(); i++) {
+                total = total + (Float)tblCart.getValueAt(i, 4);
+            }
+            txtboxTotal.setText(String.valueOf(total));
+        }
+        
+        public void PrintBill(){
+        String total = txtboxTotal.getText();
+        String pay = txtboxTenderAmount.getText();
+        String bal = txtboxChange.getText();
+         
+        txtboxBill.setText(txtboxBill.getText() + "******************************************************\n");
+        txtboxBill.setText(txtboxBill.getText() + "           AnteikuCafe Shop Bill                                     \n");
+        txtboxBill.setText(txtboxBill.getText() + "*******************************************************\n");
+        txtboxBill.setText(txtboxBill.getText() + "Product" + "\t" + "Quantity" + "\t" + "Total" + "\n"  );
+        for(int i = 0; i < model.getRowCount(); i++){
+            String prodname = (String)model.getValueAt(i, 1);
+            String quantity = String.valueOf((Integer)model.getValueAt(i, 3));
+            String amount = String.valueOf((Float)model.getValueAt(i, 4)); 
+            txtboxBill.setText(txtboxBill.getText() + prodname  + "\t" + quantity + "\t" + amount  + "\n"  );
+        }
+        txtboxBill.setText(txtboxBill.getText() + "\n");     
+        txtboxBill.setText(txtboxBill.getText() + "\t" + "\t" + "Subtotal :" + total + "\n");
+        txtboxBill.setText(txtboxBill.getText() + "\t" + "\t" + "Tender Amount :" + pay + "\n");
+        txtboxBill.setText(txtboxBill.getText() + "\t" + "\t" + "Change :" + bal + "\n");
+        txtboxBill.setText(txtboxBill.getText() + "\n");
+        txtboxBill.setText(txtboxBill.getText() + "*******************************************************\n");
+        txtboxBill.setText(txtboxBill.getText() + "           THANK YOU COME AGIN             \n");
+        }
+        
+    }
+    
+    // remove the highlighted row in the Cart Table
     private void btnRemoveItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRemoveItemActionPerformed
-        // TODO add your handling code here:
+        Cart cart = new Cart();
+        cart.RemoveItem();
+        
     }//GEN-LAST:event_btnRemoveItemActionPerformed
-
+    
+    
     private void btnAddItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddItemActionPerformed
-        // TODO add your handling code here:
+        if( !(txtboxProdCode.getText().isEmpty()) || !(txtboxProdCode.getText().isBlank())){ // if input was blank, ignore
+        
+        Cart cart = new Cart();
+        String productSize;
+        if(radbtnSmall.isSelected()){
+            productSize = "Small";
+        }
+        else if(radbtnMedium.isSelected()){
+            productSize = "Medium";
+        }
+        else {
+            productSize = "Large";
+        }
+        cart.AddItem(txtboxProdCode.getText(), productSize, (Integer)txtboxProdQuantity.getValue());
+        
+        }
     }//GEN-LAST:event_btnAddItemActionPerformed
     
-    
-    
+    // Every time a key is released, this function will search for the ProductCode
+    // if results were found, it will display the item name and price in the GUI
     private void txtboxProdCodeKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtboxProdCodeKeyReleased
-        
+        txtboxProdName.setText("");
+        txtboxProdPrice.setText("");
+        txtboxProdQuantity.setValue(1);
+        for (Products i: ProductItems) {
+            if(txtboxProdCode.getText().equals(i.getProductId())){
+                txtboxProdName.setText(i.getProductName());
+                txtboxProdPrice.setText(String.valueOf(i.getPrice()));
+            }
+        }
     }//GEN-LAST:event_txtboxProdCodeKeyReleased
-
-    private void txtboxPriceKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtboxPriceKeyReleased
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtboxPriceKeyReleased
-
-    private void txtboxProdCodeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtboxProdCodeActionPerformed
+    
+    //Initialize and Load all items from items.json and store it in the ProductItems ArrayList 
+    private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
+       String ItemsRaw = "";
+        try {
+           File myObj = new File("items.json");
+           Scanner myReader = new Scanner(myObj);
+           while (myReader.hasNextLine()) {
+             String data = myReader.nextLine();
+             System.out.println(data);
+             ItemsRaw = ItemsRaw + data;
+           }
+           myReader.close();
+         } catch (FileNotFoundException e) {
+           JOptionPane.showMessageDialog(this,"An error occurred. Cannot load localdatabase");
+           e.printStackTrace();
+         }
         
-    }//GEN-LAST:event_txtboxProdCodeActionPerformed
+       String jsonString = ItemsRaw.strip() ;
+       JSONObject obj = new JSONObject(jsonString);
+       
+       // Deserialize JSON
+       JSONArray arr = obj.getJSONArray("Products");
+        for (int i = 0; i < arr.length(); i++)
+        {
+            Products prod = new Products();
+            prod.setProductId(arr.getJSONObject(i).getString("ProductCode"));
+            prod.setProductName(arr.getJSONObject(i).getString("ItemName"));
+            prod.setPrice(Integer.parseInt(arr.getJSONObject(i).getString("ItemPrice")));
+            prod.setSize(arr.getJSONObject(i).getString("Sizes"));
+            ProductItems.add( prod);
+        }
+        
+    }//GEN-LAST:event_formWindowOpened
 
-    private void txtboxProdNameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtboxProdNameActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtboxProdNameActionPerformed
+    
+    
+    private void txtboxTenderAmountKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtboxTenderAmountKeyReleased
+        try{
+        float change = Float.valueOf(txtboxTenderAmount.getText()) - Float.valueOf(txtboxTotal.getText());
+        txtboxChange.setText(String.valueOf(change));
+        }catch (java.lang.NumberFormatException NFE){
+            JOptionPane.showMessageDialog(this, "Invalid Input.");
+        }
+    }//GEN-LAST:event_txtboxTenderAmountKeyReleased
 
-    private void txtboxPriceActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtboxPriceActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtboxPriceActionPerformed
+    
+    
+    
+    private void btnPrintBillActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPrintBillActionPerformed
+        if(!(txtboxTotal.getText().isEmpty()) || !(txtboxProdCode.getText().isBlank())){
+        Cart cart = new Cart();
+        cart.PrintBill();
+        
+        }
+    }//GEN-LAST:event_btnPrintBillActionPerformed
+
+    private void btnNewTransactionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNewTransactionActionPerformed
+        txtboxTotal.setText("");
+        txtboxTenderAmount.setText("");
+        txtboxProdQuantity.setValue(1);
+        txtboxProdPrice.setText("");
+        txtboxProdName.setText("");
+        txtboxProdCode.setText("");
+        txtboxChange.setText("");
+        txtboxBill.setText("");
+        radbtnSmall.setSelected(true);
+        DefaultTableModel model = (DefaultTableModel)tblCart.getModel(); 
+        int rows = model.getRowCount(); 
+        for(int i = rows - 1; i >=0; i--)
+        {
+           model.removeRow(i); 
+        }
+
+    }//GEN-LAST:event_btnNewTransactionActionPerformed
 
     /**
      * @param args the command line arguments
@@ -408,10 +596,9 @@ public class MainGUI extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup SizesGroup;
     private javax.swing.JButton btnAddItem;
+    private javax.swing.JButton btnNewTransaction;
     private javax.swing.JButton btnPrintBill;
     private javax.swing.JButton btnRemoveItem;
-    private javax.swing.JTextField checkbal;
-    private javax.swing.JTextArea checkreceipt;
     private javax.swing.JFileChooser jFileChooser1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
@@ -423,17 +610,19 @@ public class MainGUI extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
-    private javax.swing.JRadioButton jRadioButton1;
-    private javax.swing.JRadioButton jRadioButton2;
-    private javax.swing.JRadioButton jRadioButton3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JTable tblProducts;
-    private javax.swing.JTextField txtbox;
-    private javax.swing.JTextField txtboxPrice;
+    private javax.swing.JRadioButton radbtnLarge;
+    private javax.swing.JRadioButton radbtnMedium;
+    private javax.swing.JRadioButton radbtnSmall;
+    private javax.swing.JTable tblCart;
+    private javax.swing.JTextArea txtboxBill;
+    private javax.swing.JTextField txtboxChange;
     private javax.swing.JTextField txtboxProdCode;
     private javax.swing.JTextField txtboxProdName;
-    private javax.swing.JSpinner txtboxQuantity;
+    private javax.swing.JTextField txtboxProdPrice;
+    private javax.swing.JSpinner txtboxProdQuantity;
+    private javax.swing.JTextField txtboxTenderAmount;
     private javax.swing.JTextField txtboxTotal;
     // End of variables declaration//GEN-END:variables
 }
