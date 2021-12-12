@@ -16,3 +16,5 @@ nb-configuration.xml
 *.ear
 nbproject/private/private.properties
 nbproject/private/private.xml
+!json-20211205.jar
+!items.json
