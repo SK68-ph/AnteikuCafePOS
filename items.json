@@ -1,14 +1,14 @@
 {
     "Products":[
-    { "ProductCode":"C01","ItemName":"MilkTea","ItemPrice":"30", "Sizes":"S/M/L"},
-    { "ProductCode":"C02","ItemName":"ThaiTea","ItemPrice":"30", "Sizes":"S/M/L"},
-    { "ProductCode":"C03","ItemName":"Matcha","ItemPrice":"40", "Sizes":"S/M/L"},
-    { "ProductCode":"C04","ItemName":"Mangoholic","ItemPrice":"40", "Sizes":"S/M/L"},
-    { "ProductCode":"C05","ItemName":"Frappe","ItemPrice":"60", "Sizes":"S/M/L"},
-    { "ProductCode":"C06","ItemName":"Green tea Latte","ItemPrice":"60", "Sizes":"S/M/L"},
-    { "ProductCode":"C07","ItemName":"Americano","ItemPrice":"50", "Sizes":"S/M/L"},
-    { "ProductCode":"C08","ItemName":"Espresso","ItemPrice":"50", "Sizes":"S/M/L"},
-    { "ProductCode":"C09","ItemName":"Cold Brew","ItemPrice":"60", "Sizes":"S/M/L"},
-    { "ProductCode":"C10","ItemName":"Caramel Smoothie","ItemPrice":"60", "Sizes":"S/M/L"}
+    { "ProductCode":"C01","ItemName":"MilkTea","ItemPriceSmall":"30", "ItemPriceMedium":"40", "ItemPriceLarge":"50"},
+    { "ProductCode":"C02","ItemName":"ThaiTea","ItemPriceSmall":"30", "ItemPriceMedium":"40", "ItemPriceLarge":"50"},
+    { "ProductCode":"C03","ItemName":"Matcha","ItemPriceSmall":"40", "ItemPriceMedium":"50", "ItemPriceLarge":"60"},
+    { "ProductCode":"C04","ItemName":"Mangoholic","ItemPriceSmall":"40", "ItemPriceMedium":"50", "ItemPriceLarge":"60"},
+    { "ProductCode":"C05","ItemName":"Frappe","ItemPriceSmall":"60", "ItemPriceMedium":"70", "ItemPriceLarge":"80"},
+    { "ProductCode":"C06","ItemName":"Green tea Latte","ItemPriceSmall":"60", "ItemPriceMedium":"70", "ItemPriceLarge":"80"},
+    { "ProductCode":"C07","ItemName":"Americano","ItemPriceSmall":"50", "ItemPriceMedium":"60", "ItemPriceLarge":"70"},
+    { "ProductCode":"C08","ItemName":"Espresso","ItemPriceSmall":"50", "ItemPriceMedium":"60", "ItemPriceLarge":"70"},
+    { "ProductCode":"C09","ItemName":"Cold Brew","ItemPriceSmall":"60", "ItemPriceMedium":"70", "ItemPriceLarge":"80"},
+    { "ProductCode":"C10","ItemName":"Caramel Smoothie","ItemPriceSmall":"60", "ItemPriceMedium":"70", "ItemPriceLarge":"80"}
     ]
 }

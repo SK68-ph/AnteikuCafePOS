@@ -2,10 +2,17 @@
 
 package anteikucafepos;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
@@ -126,17 +133,32 @@ public class MainGUI extends javax.swing.JFrame {
         radbtnMedium.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         radbtnMedium.setForeground(new java.awt.Color(255, 255, 255));
         radbtnMedium.setText("Medium");
+        radbtnMedium.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                radbtnMediumActionPerformed(evt);
+            }
+        });
 
         SizesGroup.add(radbtnLarge);
         radbtnLarge.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         radbtnLarge.setForeground(new java.awt.Color(255, 255, 255));
         radbtnLarge.setText("Large");
+        radbtnLarge.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                radbtnLargeActionPerformed(evt);
+            }
+        });
 
         SizesGroup.add(radbtnSmall);
         radbtnSmall.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         radbtnSmall.setForeground(new java.awt.Color(255, 255, 255));
         radbtnSmall.setSelected(true);
         radbtnSmall.setText("Small");
+        radbtnSmall.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                radbtnSmallActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -249,7 +271,7 @@ public class MainGUI extends javax.swing.JFrame {
                 java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class, java.lang.Float.class
             };
             boolean[] canEdit = new boolean [] {
-                true, false, true, true, false
+                false, false, true, true, true
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -374,33 +396,27 @@ public class MainGUI extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
     
-    // This variable will store data from the json file
-    ArrayList<Products> ProductItems = new ArrayList<Products>();
     
+    ArrayList<Products> ProductItems = new ArrayList<>();
+    Cart cart;
     
     public class Cart{
-        private DefaultTableModel model = (DefaultTableModel) tblCart.getModel();
+        private DefaultTableModel _model = (DefaultTableModel) tblCart.getModel();
+        public String transactID;
         
-        public void AddItem(String ProductID, String ProductSize, int Quantity ){
+        public void AddItem(String ProductID, String ProductSize, int Quantity , float Total){
             for (Products i: ProductItems)
             {
                 if(i.getProductId().equals(ProductID)){
-                    float total = i.getPrice() * Quantity;
-                    if (ProductSize.equals("Medium")) {
-                        total = (total / 100) * 150;
-                    }else if(ProductSize.equals("Large")){
-                        total = (total / 100) * 200;
-                    }
-                    
-                    Object[] rowData = { i.getProductId(),i.getProductName(), ProductSize, Quantity, total};
-                    model.addRow(rowData);
+                    Object[] rowData = { i.getProductId(),i.getProductName(), ProductSize, Quantity, Total * Quantity};
+                    _model.addRow(rowData);
                 }
             }
             CalculateTotal();
         }
         public void RemoveItem(){
             try{
-                model.removeRow(tblCart.getSelectedRow());
+                _model.removeRow(tblCart.getSelectedRow());
             }catch (java.lang.ArrayIndexOutOfBoundsException AIE){
                 System.out.println("No items to be deleted");
             }
@@ -408,82 +424,109 @@ public class MainGUI extends javax.swing.JFrame {
         }
         
         public void CalculateTotal(){
-            float total = 0;
-            for (int i = 0; i < model.getRowCount(); i++) {
+            float total = 0f;
+            for (int i = 0; i < _model.getRowCount(); i++) {
                 total = total + (Float)tblCart.getValueAt(i, 4);
             }
             txtboxTotal.setText(String.valueOf(total));
         }
         
+        private String GenerateTransactID() {
+            int min = 1000;
+            int max = 10000000;
+            int random_int = (int)Math.floor(Math.random()*(max-min+1)+min);
+            return String.valueOf(random_int);
+        }
+        
         public void PrintBill(){
-        String total = txtboxTotal.getText();
-        String pay = txtboxTenderAmount.getText();
-        String bal = txtboxChange.getText();
-         
-        txtboxBill.setText(txtboxBill.getText() + "******************************************************\n");
-        txtboxBill.setText(txtboxBill.getText() + "           AnteikuCafe Shop Bill                                     \n");
-        txtboxBill.setText(txtboxBill.getText() + "*******************************************************\n");
-        txtboxBill.setText(txtboxBill.getText() + "Product" + "\t" + "Quantity" + "\t" + "Total" + "\n"  );
-        for(int i = 0; i < model.getRowCount(); i++){
-            String prodname = (String)model.getValueAt(i, 1);
-            String quantity = String.valueOf((Integer)model.getValueAt(i, 3));
-            String amount = String.valueOf((Float)model.getValueAt(i, 4)); 
-            txtboxBill.setText(txtboxBill.getText() + prodname  + "\t" + quantity + "\t" + amount  + "\n"  );
+            String total = txtboxTotal.getText();
+            String pay = txtboxTenderAmount.getText();
+            String bal = txtboxChange.getText();
+            transactID = GenerateTransactID();
+
+            txtboxBill.setText(txtboxBill.getText() + "******************************************************\n");
+            txtboxBill.setText(txtboxBill.getText() + "           AnteikuCafe Shop Bill                                     \n");
+            txtboxBill.setText(txtboxBill.getText() + "*******************************************************\n");
+            txtboxBill.setText(txtboxBill.getText() + "Transaction ID : \t" + transactID + "\n");
+            txtboxBill.setText(txtboxBill.getText() + "Product \t" + "Quantity \t \n");
+            for(int i = 0; i < _model.getRowCount(); i++){
+                String prodname = (String)_model.getValueAt(i, 1);
+                String quantity = String.valueOf((Integer)_model.getValueAt(i, 3));
+                String amount = String.valueOf((Float)_model.getValueAt(i, 4)); 
+                txtboxBill.setText(txtboxBill.getText() + prodname + "\t" + quantity + "\t" + amount  + "\n"  );
+            }
+            txtboxBill.setText(txtboxBill.getText() + "\n");     
+            txtboxBill.setText(txtboxBill.getText() + "\t" + "\t" + "Subtotal :" + total + "\n");
+            txtboxBill.setText(txtboxBill.getText() + "\t" + "\t" + "Tender Amount :" + pay + "\n");
+            txtboxBill.setText(txtboxBill.getText() + "\t" + "\t" + "Change :" + bal + "\n");
+            txtboxBill.setText(txtboxBill.getText() + "\n");
+            txtboxBill.setText(txtboxBill.getText() + "*******************************************************\n");
+            txtboxBill.setText(txtboxBill.getText() + "           THANK YOU COME AGIN             \n");
         }
-        txtboxBill.setText(txtboxBill.getText() + "\n");     
-        txtboxBill.setText(txtboxBill.getText() + "\t" + "\t" + "Subtotal :" + total + "\n");
-        txtboxBill.setText(txtboxBill.getText() + "\t" + "\t" + "Tender Amount :" + pay + "\n");
-        txtboxBill.setText(txtboxBill.getText() + "\t" + "\t" + "Change :" + bal + "\n");
-        txtboxBill.setText(txtboxBill.getText() + "\n");
-        txtboxBill.setText(txtboxBill.getText() + "*******************************************************\n");
-        txtboxBill.setText(txtboxBill.getText() + "           THANK YOU COME AGIN             \n");
+        
+    }
+    
+    
+    private void UpdateItemView(){
+        txtboxProdName.setText("");
+        txtboxProdPrice.setText("");
+        txtboxProdQuantity.setValue(1);
+        
+        for (Products i: ProductItems) {
+            if(txtboxProdCode.getText().equals(i.getProductId())){
+                txtboxProdName.setText(i.getProductName());
+                
+                float price = 0f;
+                if(radbtnSmall.isSelected())
+                    price = i._prices.getItemPriceSmall();
+                else if(radbtnMedium.isSelected())
+                    price = i._prices.getItemPriceMedium();
+                else if(radbtnLarge.isSelected())
+                    price = i._prices.getItemPriceLarge();
+                
+                txtboxProdPrice.setText(String.valueOf(price));
+            }
         }
+        
         
     }
     
     // remove the highlighted row in the Cart Table
     private void btnRemoveItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRemoveItemActionPerformed
-        Cart cart = new Cart();
         cart.RemoveItem();
-        
     }//GEN-LAST:event_btnRemoveItemActionPerformed
     
     
     private void btnAddItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddItemActionPerformed
         if( !(txtboxProdCode.getText().isEmpty()) || !(txtboxProdCode.getText().isBlank())){ // if input was blank, ignore
-        
-        Cart cart = new Cart();
-        String productSize;
-        if(radbtnSmall.isSelected()){
-            productSize = "Small";
-        }
-        else if(radbtnMedium.isSelected()){
-            productSize = "Medium";
-        }
-        else {
-            productSize = "Large";
-        }
-        cart.AddItem(txtboxProdCode.getText(), productSize, (Integer)txtboxProdQuantity.getValue());
-        
+            String productSize;
+            if(radbtnSmall.isSelected()){
+                productSize = "Small";
+            }
+            else if(radbtnMedium.isSelected()){
+                productSize = "Medium";
+            }
+            else {
+                productSize = "Large";
+            }
+            cart.AddItem(txtboxProdCode.getText(), productSize, (Integer)txtboxProdQuantity.getValue(), Float.parseFloat(txtboxProdPrice.getText()));
+
         }
     }//GEN-LAST:event_btnAddItemActionPerformed
+    
+    
     
     // Every time a key is released, this function will search for the ProductCode
     // if results were found, it will display the item name and price in the GUI
     private void txtboxProdCodeKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtboxProdCodeKeyReleased
-        txtboxProdName.setText("");
-        txtboxProdPrice.setText("");
-        txtboxProdQuantity.setValue(1);
-        for (Products i: ProductItems) {
-            if(txtboxProdCode.getText().equals(i.getProductId())){
-                txtboxProdName.setText(i.getProductName());
-                txtboxProdPrice.setText(String.valueOf(i.getPrice()));
-            }
-        }
+        UpdateItemView();
     }//GEN-LAST:event_txtboxProdCodeKeyReleased
     
     //Initialize and Load all items from items.json and store it in the ProductItems ArrayList 
     private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
+       cart = new Cart();
+       
+       // Read items.json and store it as sa raw string
        String ItemsRaw = "";
         try {
            File myObj = new File("items.json");
@@ -495,23 +538,23 @@ public class MainGUI extends javax.swing.JFrame {
            }
            myReader.close();
          } catch (FileNotFoundException e) {
-           JOptionPane.showMessageDialog(this,"An error occurred. Cannot load localdatabase");
-           e.printStackTrace();
+           JOptionPane.showMessageDialog(this,"An error occurred. Cannot load localdatabase " + e.getMessage());
          }
+        
         
        String jsonString = ItemsRaw.strip() ;
        JSONObject obj = new JSONObject(jsonString);
        
-       // Deserialize JSON
+       // Deserialize JSON and store in ProductItems array as Products object
        JSONArray arr = obj.getJSONArray("Products");
         for (int i = 0; i < arr.length(); i++)
         {
             Products prod = new Products();
             prod.setProductId(arr.getJSONObject(i).getString("ProductCode"));
             prod.setProductName(arr.getJSONObject(i).getString("ItemName"));
-            prod.setPrice(Integer.parseInt(arr.getJSONObject(i).getString("ItemPrice")));
-            prod.setSize(arr.getJSONObject(i).getString("Sizes"));
-            ProductItems.add( prod);
+            Price price = new Price(arr.getJSONObject(i).getString("ItemPriceSmall"),arr.getJSONObject(i).getString("ItemPriceMedium"),arr.getJSONObject(i).getString("ItemPriceLarge"));
+            prod.setPrice(price);
+            ProductItems.add(prod);
         }
         
     }//GEN-LAST:event_formWindowOpened
@@ -520,10 +563,10 @@ public class MainGUI extends javax.swing.JFrame {
     
     private void txtboxTenderAmountKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtboxTenderAmountKeyReleased
         try{
-        float change = Float.valueOf(txtboxTenderAmount.getText()) - Float.valueOf(txtboxTotal.getText());
-        txtboxChange.setText(String.valueOf(change));
+            float change = Float.valueOf(txtboxTenderAmount.getText()) - Float.valueOf(txtboxTotal.getText());
+            txtboxChange.setText(String.valueOf(change));
         }catch (java.lang.NumberFormatException NFE){
-            JOptionPane.showMessageDialog(this, "Invalid Input.");
+             System.out.println("Invalid Input.");
         }
     }//GEN-LAST:event_txtboxTenderAmountKeyReleased
 
@@ -531,10 +574,20 @@ public class MainGUI extends javax.swing.JFrame {
     
     
     private void btnPrintBillActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPrintBillActionPerformed
-        if(!(txtboxTotal.getText().isEmpty()) || !(txtboxProdCode.getText().isBlank())){
-        Cart cart = new Cart();
-        cart.PrintBill();
-        
+        if(tblCart.getRowCount() > 0 && !(txtboxTotal.getText().isBlank()) && !(txtboxTenderAmount.getText().isBlank())){
+            txtboxBill.setText("");
+            cart.PrintBill();
+            
+            String filename = java.time.LocalDate.now().toString() + ".txt";
+            String curtime = new java.util.Date().toString();
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(filename, true))) { // save receipt in the log file
+                writer.append("\n" +curtime + "\n");
+                writer.append(txtboxBill.getText().substring(0, txtboxBill.getText().length() - 43));
+            } catch (IOException ex) {
+                System.out.println("Unable to save receipt");
+                
+            }
+            btnPrintBill.setEnabled(false);
         }
     }//GEN-LAST:event_btnPrintBillActionPerformed
 
@@ -554,8 +607,20 @@ public class MainGUI extends javax.swing.JFrame {
         {
            model.removeRow(i); 
         }
-
+        btnPrintBill.setEnabled(true);
     }//GEN-LAST:event_btnNewTransactionActionPerformed
+
+    private void radbtnSmallActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_radbtnSmallActionPerformed
+        UpdateItemView();
+    }//GEN-LAST:event_radbtnSmallActionPerformed
+
+    private void radbtnMediumActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_radbtnMediumActionPerformed
+        UpdateItemView();
+    }//GEN-LAST:event_radbtnMediumActionPerformed
+
+    private void radbtnLargeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_radbtnLargeActionPerformed
+        UpdateItemView();
+    }//GEN-LAST:event_radbtnLargeActionPerformed
 
     /**
      * @param args the command line arguments

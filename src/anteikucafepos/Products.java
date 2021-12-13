@@ -2,24 +2,14 @@
 package anteikucafepos;
 
 public class Products {
-    private int _price;
         private String _id;
         private String _prodName;
-        private String _size;
+        public Price _prices;
         
+        public void setPrice(Price prices) {
+            this._prices = prices;
+        }
         
-        public int getPrice() {
-            return _price;
-        }
-        public void setPrice(int price) {
-            this._price = price;
-        }
-        public String getSize() {
-            return _size;
-        }
-        public void setSize(String size) {
-            this._size = size;
-        }
         public String getProductId() {
              return _id;
         }
@@ -32,5 +22,7 @@ public class Products {
         public void setProductName(String name) {
             this._prodName = name;
        }
+        
+        
 
 }
