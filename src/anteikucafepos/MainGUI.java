@@ -402,7 +402,7 @@ public class MainGUI extends javax.swing.JFrame {
     
     public class Cart{
         private DefaultTableModel _model = (DefaultTableModel) tblCart.getModel();
-        public String transactID;
+        private String _transactID;
         
         public void AddItem(String ProductID, String ProductSize, int Quantity , float Total){
             for (Products i: ProductItems)
@@ -414,6 +414,7 @@ public class MainGUI extends javax.swing.JFrame {
             }
             CalculateTotal();
         }
+        
         public void RemoveItem(){
             try{
                 _model.removeRow(tblCart.getSelectedRow());
@@ -442,12 +443,12 @@ public class MainGUI extends javax.swing.JFrame {
             String total = txtboxTotal.getText();
             String pay = txtboxTenderAmount.getText();
             String bal = txtboxChange.getText();
-            transactID = GenerateTransactID();
+            _transactID = GenerateTransactID();
 
             txtboxBill.setText(txtboxBill.getText() + "******************************************************\n");
             txtboxBill.setText(txtboxBill.getText() + "           AnteikuCafe Shop Bill                                     \n");
             txtboxBill.setText(txtboxBill.getText() + "*******************************************************\n");
-            txtboxBill.setText(txtboxBill.getText() + "Transaction ID : \t" + transactID + "\n");
+            txtboxBill.setText(txtboxBill.getText() + "Transaction ID : \t" + _transactID + "\n");
             txtboxBill.setText(txtboxBill.getText() + "Product \t" + "Quantity \t \n");
             for(int i = 0; i < _model.getRowCount(); i++){
                 String prodname = (String)_model.getValueAt(i, 1);
@@ -559,8 +560,6 @@ public class MainGUI extends javax.swing.JFrame {
         
     }//GEN-LAST:event_formWindowOpened
 
-    
-    
     private void txtboxTenderAmountKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtboxTenderAmountKeyReleased
         try{
             float change = Float.valueOf(txtboxTenderAmount.getText()) - Float.valueOf(txtboxTotal.getText());
@@ -570,9 +569,6 @@ public class MainGUI extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_txtboxTenderAmountKeyReleased
 
-    
-    
-    
     private void btnPrintBillActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPrintBillActionPerformed
         if(tblCart.getRowCount() > 0 && !(txtboxTotal.getText().isBlank()) && !(txtboxTenderAmount.getText().isBlank())){
             txtboxBill.setText("");
